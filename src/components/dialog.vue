@@ -8,7 +8,6 @@
               <div>平台:{{n.architecture}}</div>
               <div>作者:{{n.more.author?n.more.author:'none'}}</div>
               <div>操作系统:{{n.more.os}}</div>
-              <div>创建时间:{{new Date(n.more.created)}}</div>
               <div class="port">端口:
                 <el-tag v-for="(item,key) in n.more.container_config.ExposedPorts" :key="key" size="small" effect="dark">{{ key }}</el-tag>
               </div>
@@ -21,7 +20,8 @@
               <div><el-tag type="info">{{`docker pull 172.18.100.52:5000/${param}:${n.tag}`}}</el-tag><el-button class="smallBtn" size="small" type="primary" icon="el-icon-document-copy"></el-button></div>
             </div>
           </div>
-          
+          <div>创建时间:{{new Date(n.more.created)}}</div>
+          <div>DIGEST:{{n.more.container_config.Image}}</div>
           <div>环境变量:
             <div class="env">
               <el-tag class="cols" v-for="(item,key) in n.more.container_config.Env" :key="key" type="info" size="small" effect="dark">{{ item }}</el-tag>
@@ -71,10 +71,11 @@ export default {
             tag.architecture = res.data.architecture
             tag.more =JSON.parse(res.data.history[0].v1Compatibility)
             self.clips.push(tag)
+            console.log(res);
           }).catch(self.handleErr)
           data.tags[index]=tag
         })
-        console.log(data);
+        
       }).catch(self.handleErr)
     }
   },methods:{

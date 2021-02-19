@@ -67,13 +67,27 @@ export default {
           let tag = {
             tag:i
           }
-          axois.get(`/v2/${val}/manifests/${i}`).then(res=>{
+          axois.get(`/v2/${val}/manifests/${i}?dc=${new Date().getTime()}`,{
+            headers:{
+              Accept:'*/*'
+            }
+          }).then(res=>{
             tag.architecture = res.data.architecture
             tag.more =JSON.parse(res.data.history[0].v1Compatibility)
             self.clips.push(tag)
             console.log(res);
+          }).then(()=>{
+            axois.get(`/v2/${val}/manifests/${i}?dc=${new Date().getTime()}`,{
+              headers:{
+                Accept:'application/vnd.docker.distribution.manifest.v2+json'
+              }
+            }).then(res=>{
+              tag.layers=res.data.layers
+            }).catch(self.handleErr)
           }).catch(self.handleErr)
+          
           data.tags[index]=tag
+          console.log(data);
         })
         
       }).catch(self.handleErr)
